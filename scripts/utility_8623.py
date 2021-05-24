@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-# Math utilities
-import math
+# API helper functions
+import requests
 
-def fibonacci(n):
-    """Generate Fibonacci sequence."""
-    if n <= 0:
-        return []
-    return [0] + [sum(fibonacci(n-1)[-2:]) for _ in range(n-1)]
-
-def gcd(a, b):
-    """Calculate greatest common divisor."""
-    while b:
-        a, b = b, a % b
-    return a
+def fetch_data(url):
+    """Fetch data from endpoint."""
+    try:
+        response = requests.get(url, timeout=5)
+        return response.json()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
