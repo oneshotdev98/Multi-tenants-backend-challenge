@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-# Math utilities
-import math
+# File utilities
+import os
+import glob
 
-def fibonacci(n):
-    """Generate Fibonacci sequence."""
-    if n <= 0:
-        return []
-    return [0] + [sum(fibonacci(n-1)[-2:]) for _ in range(n-1)]
+def list_files(directory, pattern="*"):
+    """List files in directory."""
+    return glob.glob(os.path.join(directory, pattern))
 
-def gcd(a, b):
-    """Calculate greatest common divisor."""
-    while b:
-        a, b = b, a % b
-    return a
+def get_file_size(filepath):
+    """Get file size in bytes."""
+    return os.path.getsize(filepath)
