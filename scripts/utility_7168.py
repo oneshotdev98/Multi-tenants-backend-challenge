@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-# String utilities
-def reverse_string(s):
-    """Reverse a string."""
-    return s[::-1]
+# Random utility script
+import random
 
-def count_vowels(s):
-    """Count vowels in string."""
-    return sum(1 for c in s.lower() if c in 'aeiou')
+def process_data(items):
+    """Process a list of items."""
+    return [x * 2 for x in items]
+
+if __name__ == "__main__":
+    data = [random.randint(1, 100) for _ in range(10)]
+    print(process_data(data))
