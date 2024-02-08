@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-# Random utility script
-import random
+# Math utilities
+import math
 
-def process_data(items):
-    """Process a list of items."""
-    return [x * 2 for x in items]
+def fibonacci(n):
+    """Generate Fibonacci sequence."""
+    if n <= 0:
+        return []
+    return [0] + [sum(fibonacci(n-1)[-2:]) for _ in range(n-1)]
 
-if __name__ == "__main__":
-    data = [random.randint(1, 100) for _ in range(10)]
-    print(process_data(data))
+def gcd(a, b):
+    """Calculate greatest common divisor."""
+    while b:
+        a, b = b, a % b
+    return a
