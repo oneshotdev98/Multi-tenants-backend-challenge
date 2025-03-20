@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-# String utilities
-def reverse_string(s):
-    """Reverse a string."""
-    return s[::-1]
+# API helper functions
+import requests
 
-def count_vowels(s):
-    """Count vowels in string."""
-    return sum(1 for c in s.lower() if c in 'aeiou')
+def fetch_data(url):
+    """Fetch data from endpoint."""
+    try:
+        response = requests.get(url, timeout=5)
+        return response.json()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
