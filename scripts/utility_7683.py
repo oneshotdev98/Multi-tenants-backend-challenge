@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-# Data processing utility
-import json
+# Date utilities
+from datetime import datetime, timedelta
 
-def load_config(path):
-    """Load JSON configuration."""
-    with open(path) as f:
-        return json.load(f)
+def days_between(date1, date2):
+    """Calculate days between two dates."""
+    return abs((date2 - date1).days)
 
-def validate_data(data):
-    """Validate input data."""
-    return all(isinstance(x, (int, str)) for x in data)
+def next_weekday(date, weekday):
+    """Get next occurrence of weekday."""
+    days_ahead = weekday - date.weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    return date + timedelta(days=days_ahead)
