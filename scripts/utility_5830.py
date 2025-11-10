@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-# Math utilities
-import math
+# Data processing utility
+import json
 
-def fibonacci(n):
-    """Generate Fibonacci sequence."""
-    if n <= 0:
-        return []
-    return [0] + [sum(fibonacci(n-1)[-2:]) for _ in range(n-1)]
+def load_config(path):
+    """Load JSON configuration."""
+    with open(path) as f:
+        return json.load(f)
 
-def gcd(a, b):
-    """Calculate greatest common divisor."""
-    while b:
-        a, b = b, a % b
-    return a
+def validate_data(data):
+    """Validate input data."""
+    return all(isinstance(x, (int, str)) for x in data)
