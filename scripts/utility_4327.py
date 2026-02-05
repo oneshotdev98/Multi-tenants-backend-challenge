@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# File utilities
-import os
-import glob
+# API helper functions
+import requests
 
-def list_files(directory, pattern="*"):
-    """List files in directory."""
-    return glob.glob(os.path.join(directory, pattern))
-
-def get_file_size(filepath):
-    """Get file size in bytes."""
-    return os.path.getsize(filepath)
+def fetch_data(url):
+    """Fetch data from endpoint."""
+    try:
+        response = requests.get(url, timeout=5)
+        return response.json()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
