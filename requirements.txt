@@ -1,0 +1,11 @@
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+sqlalchemy==2.0.43
+pydantic-settings==2.10.1
+strawberry-graphql[fastapi]==0.278.0
+langchain==0.3.27
+langchain-core==0.3.74
+langchain-google-genai==2.1.9
+psycopg2-binary==2.9.10
+pytest==8.4.1
+httpx==0.28.1
