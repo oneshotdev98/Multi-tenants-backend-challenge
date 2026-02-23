@@ -155,4 +155,9 @@ Current suite covers:
 5. `POST /tenants/{tenant_id}/matches/{match_id}/confirm`
 6. `GET /tenants/{tenant_id}/reconcile/explain?...`
 
+## GraphQL Sample Image
+
+<img width="2879" height="1038" alt="image" src="https://github.com/user-attachments/assets/c21270a6-4737-413d-b82a-ce6ee7bf1da4" />
+
+
 
