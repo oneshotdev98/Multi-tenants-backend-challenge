@@ -74,7 +74,6 @@ uvicorn app.main:app --reload
 5. Open:
 
 - Swagger: `http://127.0.0.1:8000/docs`
-- GraphQL: `http://127.0.0.1:8000/graphql`
 - Health: `GET /`
 
 ## API Summary
