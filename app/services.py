@@ -30,15 +30,19 @@ def _get_tenant_or_404(db: Session, tenant_id: str):
 def create_tenant(db: Session, name: str):
     tenant = models.Tenant(name=name)
     db.add(tenant)
-    db.flush()
+    db.commit()
+    db.refresh(tenant)
     return tenant
 
 
 def create_invoice(db: Session, tenant_id: str, data):
     _get_tenant_or_404(db, tenant_id)
+
     invoice = models.Invoice(tenant_id=tenant_id, **data)
     db.add(invoice)
-    db.flush()
+    db.commit()
+    db.refresh(invoice)
+
     return invoice
 
 
@@ -60,18 +64,25 @@ def list_invoices(db: Session, tenant_id: str, filters, skip=0, limit=20):
 
 def delete_invoice(db: Session, tenant_id: str, invoice_id: str):
     _get_tenant_or_404(db, tenant_id)
+
     invoice = db.query(models.Invoice).filter_by(
-        id=invoice_id, tenant_id=tenant_id
+        id=invoice_id,
+        tenant_id=tenant_id
     ).first()
+
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found for tenant")
+
     db.delete(invoice)
+    db.commit()
 
 
 def import_transactions(db: Session, tenant_id: str, txs, key: str):
     _get_tenant_or_404(db, tenant_id)
+
     if not key or not key.strip():
         raise HTTPException(status_code=400, detail="Idempotency key is required")
+
     if not txs:
         raise HTTPException(status_code=400, detail="At least one transaction is required")
 
@@ -84,7 +95,8 @@ def import_transactions(db: Session, tenant_id: str, txs, key: str):
     ).hexdigest()
 
     existing = db.query(models.IdempotencyKey).filter_by(
-        tenant_id=tenant_id, key=key
+        tenant_id=tenant_id,
+        key=key
     ).first()
 
     if existing:
@@ -101,6 +113,7 @@ def import_transactions(db: Session, tenant_id: str, txs, key: str):
     try:
         db.flush()
     except IntegrityError:
+        db.rollback()
         raise HTTPException(
             status_code=409,
             detail="Duplicate bank transaction for tenant/external_id",
@@ -114,17 +127,22 @@ def import_transactions(db: Session, tenant_id: str, txs, key: str):
         payload_hash=payload_hash,
         response=json.dumps(response_payload),
     )
+
     db.add(record)
+    db.commit()
 
     return response_payload
 
 
 def reconcile(db: Session, tenant_id: str):
     _get_tenant_or_404(db, tenant_id)
+
     invoices = db.query(models.Invoice).filter_by(tenant_id=tenant_id).all()
     transactions = db.query(models.BankTransaction).filter_by(tenant_id=tenant_id).all()
+
     if not invoices:
         raise HTTPException(status_code=404, detail="No invoices found for tenant")
+
     if not transactions:
         raise HTTPException(status_code=404, detail="No bank transactions found for tenant")
 
@@ -143,31 +161,38 @@ def reconcile(db: Session, tenant_id: str):
                 db.add(match)
                 results.append(match)
 
-    
-    db.flush()
+    db.commit()
 
     return results
 
 
 def confirm_match(db: Session, tenant_id: str, match_id: str):
     _get_tenant_or_404(db, tenant_id)
+
     match = db.query(models.Match).filter_by(
-        id=match_id, tenant_id=tenant_id
+        id=match_id,
+        tenant_id=tenant_id
     ).first()
 
     if not match:
         raise HTTPException(status_code=404, detail="Match not found for tenant")
+
     if match.status == "confirmed":
         raise HTTPException(status_code=409, detail="Match is already confirmed")
 
     match.status = "confirmed"
 
     invoice = db.query(models.Invoice).filter_by(
-        id=match.invoice_id, tenant_id=tenant_id
+        id=match.invoice_id,
+        tenant_id=tenant_id
     ).first()
+
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice for match not found")
 
     invoice.status = "matched"
+
+    db.commit()
+    db.refresh(match)
 
     return match
