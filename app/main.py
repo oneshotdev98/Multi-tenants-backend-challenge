@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, Header, Body, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
+from app.database import SessionLocal
+
 from app.database import Base, engine, get_db
 from app import models
 from app.ai import explain
@@ -36,9 +38,22 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Multi-Tenant Invoice Reconciliation API")
 
+# graphql_app = GraphQLRouter(
+#     graphql_schema.schema,
+#     context_getter=lambda request: {"db": next(get_db())},
+# )
+
+def get_context():
+    db = SessionLocal()
+    try:
+        yield {"db": db}
+    finally:
+        db.close()
+
+
 graphql_app = GraphQLRouter(
     graphql_schema.schema,
-    context_getter=lambda request: {"db": next(get_db())},
+    context_getter=get_context
 )
 
 app.include_router(graphql_app, prefix="/graphql")
