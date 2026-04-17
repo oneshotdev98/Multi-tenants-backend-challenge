@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# Random utility script
-import random
+# File utilities
+import os
+import glob
 
-def process_data(items):
-    """Process a list of items."""
-    return [x * 2 for x in items]
+def list_files(directory, pattern="*"):
+    """List files in directory."""
+    return glob.glob(os.path.join(directory, pattern))
 
-if __name__ == "__main__":
-    data = [random.randint(1, 100) for _ in range(10)]
-    print(process_data(data))
+def get_file_size(filepath):
+    """Get file size in bytes."""
+    return os.path.getsize(filepath)
