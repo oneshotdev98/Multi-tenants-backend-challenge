@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# Random utility script
-import random
+# Data processing utility
+import json
 
-def process_data(items):
-    """Process a list of items."""
-    return [x * 2 for x in items]
+def load_config(path):
+    """Load JSON configuration."""
+    with open(path) as f:
+        return json.load(f)
 
-if __name__ == "__main__":
-    data = [random.randint(1, 100) for _ in range(10)]
-    print(process_data(data))
+def validate_data(data):
+    """Validate input data."""
+    return all(isinstance(x, (int, str)) for x in data)
