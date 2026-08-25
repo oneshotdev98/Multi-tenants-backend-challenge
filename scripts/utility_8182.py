@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-# API helper functions
-import requests
+# Date utilities
+from datetime import datetime, timedelta
 
-def fetch_data(url):
-    """Fetch data from endpoint."""
-    try:
-        response = requests.get(url, timeout=5)
-        return response.json()
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+def days_between(date1, date2):
+    """Calculate days between two dates."""
+    return abs((date2 - date1).days)
+
+def next_weekday(date, weekday):
+    """Get next occurrence of weekday."""
+    days_ahead = weekday - date.weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    return date + timedelta(days=days_ahead)
